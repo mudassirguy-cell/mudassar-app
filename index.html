@@ -67,4 +67,13 @@
     </script>
 
 </body>
-</html>
+</html><div class="sidebar">
+    <div class="icon" onclick="likeVideo()">❤️ <span id="like-count">0</span></div>
+    <div class="icon" onclick="showComments()">💬</div>
+</div>
+
+<div id="comment-section" style="display:none; position:fixed; bottom:0; background:white; width:100%; padding:10px;">
+    <input type="text" id="comment-input" placeholder="Add a comment...">
+    <button onclick="postComment()">Send</button>
+    <div id="comments-display"></div>
+</div>
