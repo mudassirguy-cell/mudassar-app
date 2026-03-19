@@ -1,73 +1,80 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mudassir Voice Studio</title>
+    <title>Mudassir Voice Studio Pro</title>
     <style>
-        body { background: #050505; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
-        .box { max-width: 450px; margin: auto; background: #111; padding: 30px; border-radius: 25px; border: 2px solid #fe2c55; }
-        h1 { color: #fe2c55; }
-        textarea { width: 100%; height: 120px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 15px; padding: 15px; margin-bottom: 20px; outline: none; }
-        .btn-group { display: flex; flex-direction: column; gap: 10px; }
-        .btn { padding: 15px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .play-btn { background: #fe2c55; color: white; }
-        .download-btn { background: #28a745; color: white; display: none; } /* Shuru mein hiden rahega */
-        .status { margin-top: 15px; font-size: 14px; color: #fe2c55; }
+        body { background: #050505; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; }
+        .box { max-width: 450px; margin: auto; background: #111; padding: 30px; border-radius: 25px; border: 2px solid #fe2c55; box-shadow: 0 0 30px rgba(254,44,85,0.3); }
+        h1 { color: #fe2c55; letter-spacing: 2px; }
+        p { color: #888; font-size: 14px; }
+        
+        textarea { width: 100%; height: 150px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 15px; padding: 15px; font-size: 16px; outline: none; margin-bottom: 20px; border-left: 4px solid #fe2c55; }
+        
+        .btn { width: 100%; padding: 15px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; margin-top: 10px; }
+        .play-btn { background: #fe2c55; color: white; box-shadow: 0 5px 15px rgba(254, 44, 85, 0.4); }
+        .download-btn { background: #28a745; color: white; display: none; text-decoration: none; line-height: 15px; }
+        
+        .status { margin-top: 20px; font-size: 14px; color: #fe2c55; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="box">
-    <h1>Voice Downloader 📥</h1>
-    <textarea id="text" placeholder="Apni video ka script likhein..."></textarea>
+    <h1>STORY VOICE AI 🎙️</h1>
+    <p>TikTok & Reels ke liye Shayeri aur Kahaniyan banayein</p>
     
-    <div class="btn-group">
-        <button class="btn play-btn" onclick="startRecording()">AWAAZ BANAIN AUR SUNAIN</button>
-        <a id="downloadLink" class="btn download-btn">FILE DOWNLOAD KAREIN 📁</a>
-    </div>
+    <textarea id="text" placeholder="Yahan apni pur-asar shayeri ya kahani likhein..."></textarea>
     
-    <div id="status" class="status">Ready...</div>
+    <div id="status" class="status">System Ready...</div>
+
+    <button class="btn play-btn" onclick="generateAndRecord()">BANAIN AUR SUNAIN</button>
+    <a id="downloadLink" class="btn download-btn">FILE DOWNLOAD KAREIN (MP3/WAV) 📥</a>
 </div>
 
 <script>
-    let mediaRecorder;
     let audioChunks = [];
+    let mediaRecorder;
 
-    async function startRecording() {
+    async function generateAndRecord() {
         const text = document.getElementById('text').value;
-        if (!text) return alert("Kuch likhein!");
+        if (!text) return alert("Pehle kuch likhein!");
 
-        document.getElementById('status').innerText = "AI Processing...";
-        
-        // Voice Setup
+        const status = document.getElementById('status');
+        status.innerText = "AI Recording Started...";
+
+        // Voice Configuration for Storytelling
         const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = 'hi-IN';
-        msg.rate = 0.8;
+        msg.lang = 'hi-IN'; // Best for Urdu/Hindi
+        msg.rate = 0.82;    // Thoda slow taake ehsas paida ho
+        msg.pitch = 0.9;    // Thodi bhari aur mardana (Deep) awaz
 
-        // Recording Logic
+        // Audio Recording Setup
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder = new MediaRecorder(stream);
         audioChunks = [];
 
         mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        
         mediaRecorder.onstop = () => {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-            const audioUrl = URL.createObjectURL(audioBlob);
+            const blob = new Blob(audioChunks, { type: 'audio/wav' });
+            const url = URL.createObjectURL(blob);
             const link = document.getElementById('downloadLink');
-            link.href = audioUrl;
-            link.download = "Mudassir_Voice.wav";
+            link.href = url;
+            link.download = "Mudassir_Deep_Voice.wav";
             link.style.display = "block";
-            document.getElementById('status').innerText = "Taiyar hai! Download karein.";
+            status.innerText = "Recording Complete! Niche se download karein.";
         };
 
-        // Start Recording and Speaking
         mediaRecorder.start();
         window.speechSynthesis.speak(msg);
 
         msg.onend = () => {
-            mediaRecorder.stop();
-            stream.getTracks().forEach(track => track.stop());
+            setTimeout(() => {
+                mediaRecorder.stop();
+                stream.getTracks().forEach(track => track.stop());
+            }, 500); // Thoda extra gap recording ke liye
         };
     }
 </script>
