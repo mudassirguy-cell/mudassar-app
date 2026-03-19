@@ -5,88 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mudassar Reels Pro</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
-        .video-container { height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; background: #111; position: relative; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: black; }
+        .video-container { height: 100vh; width: 100%; position: relative; display: flex; align-items: center; justify-content: center; }
         video { width: 100%; height: 100%; object-fit: cover; }
         
-        /* Upload Button Styling */
-        .upload-btn {
-            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: white; color: black; border-radius: 50px; padding: 12px 25px;
-            font-weight: bold; cursor: pointer; z-index: 100; box-shadow: 0 0 15px rgba(255,255,255,0.3);
-            display: flex; align-items: center; gap: 10px; font-size: 18px;
-        }
-        #file-input { display: none; }
-        
-        .header { position: absolute; top: 15px; width: 100%; text-align: center; color: white; font-weight: bold; z-index: 10; font-size: 22px; text-shadow: 2px 2px 5px #000; }
-        .sidebar { position: absolute; right: 15px; bottom: 120px; display: flex; flex-direction: column; gap: 25px; color: white; font-size: 30px; z-index: 10; }
-        .status-msg { position: absolute; top: 50%; color: #555; font-size: 14px; text-align: center; width: 100%; }
+        /* TikTok Style Sidebar */
+        .sidebar { position: absolute; right: 15px; bottom: 100px; display: flex; flex-direction: column; gap: 20px; color: white; text-align: center; font-family: sans-serif; }
+        .icon { font-size: 30px; cursor: pointer; }
+        .icon span { font-size: 14px; display: block; }
+
+        /* Comment Box */
+        #comment-box { position: absolute; bottom: 0; background: rgba(255,255,255,0.9); width: 100%; padding: 15px; display: none; border-radius: 20px 20px 0 0; }
+        input { width: 80%; padding: 10px; border-radius: 20px; border: 1px solid #ccc; }
     </style>
 </head>
 <body>
 
-    <div class="header">Mudassar Reels</div>
-    
-    <div class="video-container" id="player">
-        <p class="status-msg" id="msg">Koi video nahi hai. Neeche button se upload karein!</p>
-        <video id="mainVideo" loop playsinline style="display:none;"></video>
-        
-        <div class="sidebar">
-            <div onclick="alert('Liked!')">❤️</div>
-            <div onclick="alert('Comment section coming soon!')">💬</div>
-            <div onclick="alert('Shared!')">➡️</div>
-        </div>
+<div class="video-container">
+    <video src="YOUR_VIDEO_LINK_HERE" loop autoplay muted onclick="this.paused ? this.play() : this.pause()"></video>
+
+    <div class="sidebar">
+        <div class="icon" onclick="addLike()">❤️ <span id="like-count">0</span></div>
+        <div class="icon" onclick="toggleComments()">💬 <span>12</span></div>
+        <div class="icon">➡️ <span>Share</span></div>
     </div>
 
-    <label for="file-input" class="upload-btn">
-        <span>➕ Upload Video</span>
-    </label>
-    <input type="file" id="file-input" accept="video/*">
+    <div id="comment-box">
+        <h4>Comments</h4>
+        <input type="text" placeholder="Write a comment...">
+        <button onclick="toggleComments()">Close</button>
+    </div>
+</div>
 
-    <script>
-        const fileInput = document.getElementById('file-input');
-        const videoPlayer = document.getElementById('mainVideo');
-        const msg = document.getElementById('msg');
-
-        fileInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                const videoURL = URL.createObjectURL(file);
-                videoPlayer.src = videoURL;
-                videoPlayer.style.display = "block";
-                msg.style.display = "none";
-                videoPlayer.play();
-            }
-        });
-
-        // Click to Play/Pause
-        videoPlayer.addEventListener('click', () => {
-            if (videoPlayer.paused) videoPlayer.play();
-            else videoPlayer.pause();
-        });
-    </script>
+<script>
+    function addLike() {
+        let count = document.getElementById('like-count');
+        count.innerText = parseInt(count.innerText) + 1;
+        alert("Shukriya! Like save ho gaya.");
+    }
+    function toggleComments() {
+        let box = document.getElementById('comment-box');
+        box.style.display = (box.style.display === 'none') ? 'block' : 'none';
+    }
+</script>
 
 </body>
-</html><div class="sidebar">
-    <div class="icon" onclick="likeVideo()">❤️ <span id="like-count">0</span></div>
-    <div class="icon" onclick="showComments()">💬</div>
-</div>
+</html>
 
-<div id="comment-section" style="display:none; position:fixed; bottom:0; background:white; width:100%; padding:10px;">
-    <input type="text" id="comment-input" placeholder="Add a comment...">
-    <button onclick="postComment()">Send</button>
-    <div id="comments-display"></div>
-</div>
-// Import the functions you need from the import { initializeApp } from "firebase/a import { getAnalytics } from "firebase/an // TODO: Add SDKs for Firebase products t
-
-// https://firebase.google.com/docs/web/s
-
-// Your web app's Firebase configuration
-
-// For Firebase JS SDK v7.20.0 and later, const firebaseConfig = {
-
-}; apiKey: "AIzaSyBZpsMGK-Xz571d4zJwYQOSC_ authDomain: "mudassir-reels.firebaseapp projectId: "mudassir-reels", storageBucket: "mudassir-reels.firebase messagingSenderId: "411777056267", appId: "1:411777056267:web:2508c00af325 measurementId: "G-B7WW3NMS1W"
-
-// Initialize Firebase
-
-const app = initializeApp (firebaseConfig) const analytics = getAnalytics (app);
