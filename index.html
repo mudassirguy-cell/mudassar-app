@@ -3,60 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mudassir Voice AI</title>
+    <title>Mudassir Voice Studio</title>
     <style>
-        body { background: #0b0d11; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
-        .container { max-width: 400px; margin: auto; background: #1a1d23; padding: 30px; border-radius: 20px; border: 2px solid #fe2c55; box-shadow: 0 0 20px #fe2c55; }
-        h2 { color: #fe2c55; text-transform: uppercase; }
-        textarea { width: 100%; height: 100px; background: #2a303c; border: 1px solid #444; color: white; border-radius: 10px; padding: 10px; margin-bottom: 20px; outline: none; }
-        .btn { background: #fe2c55; border: none; color: white; padding: 15px 30px; border-radius: 30px; cursor: pointer; font-weight: bold; width: 100%; font-size: 18px; margin-bottom: 10px; }
-        .btn:hover { background: white; color: #fe2c55; }
-        .shairi-box { margin-top: 20px; border-top: 1px solid #333; padding-top: 10px; }
-        .shairi-item { cursor: pointer; background: #2a2e35; padding: 10px; margin: 5px; border-radius: 5px; font-style: italic; }
+        body { background: #050505; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
+        .box { max-width: 450px; margin: auto; background: #111; padding: 30px; border-radius: 25px; border: 2px solid #fe2c55; }
+        h1 { color: #fe2c55; }
+        textarea { width: 100%; height: 120px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 15px; padding: 15px; margin-bottom: 20px; outline: none; }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        .btn { padding: 15px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .play-btn { background: #fe2c55; color: white; }
+        .download-btn { background: #28a745; color: white; display: none; } /* Shuru mein hiden rahega */
+        .status { margin-top: 15px; font-size: 14px; color: #fe2c55; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Voice AI Shayeri 🎙️</h2>
-    <p>Apni shayeri likhein ya niche di gayi shayeri par click karein:</p>
+<div class="box">
+    <h1>Voice Downloader 📥</h1>
+    <textarea id="text" placeholder="Apni video ka script likhein..."></textarea>
     
-    <textarea id="text-to-speak" placeholder="Yahan apni shayeri ya koi baat likhein..."></textarea>
-    
-    <button class="btn" onclick="speakText()">AWAAZ SUNO 🔊</button>
-
-    <div class="shairi-box">
-        <h3>Famous Shairi</h3>
-        <div class="shairi-item" onclick="quickShairi(this)">Khudi ko kar buland itna ke har taqdeer se pehle...</div>
-        <div class="shairi-item" onclick="quickShairi(this)">Sitaron se aage jahan aur bhi hain...</div>
-        <div class="shairi-item" onclick="quickShairi(this)">Mudassir ne banaya hai ye AI system zabardast...</div>
+    <div class="btn-group">
+        <button class="btn play-btn" onclick="startRecording()">AWAAZ BANAIN AUR SUNAIN</button>
+        <a id="downloadLink" class="btn download-btn">FILE DOWNLOAD KAREIN 📁</a>
     </div>
+    
+    <div id="status" class="status">Ready...</div>
 </div>
 
 <script>
-    function speakText() {
-        const text = document.getElementById('text-to-speak').value;
-        if (text === "") {
-            alert("Pehle kuch likhein!");
-            return;
-        }
+    let mediaRecorder;
+    let audioChunks = [];
 
-        // Web Speech API
-        const speech = new SpeechSynthesisUtterance();
-        speech.text = text;
-        speech.volume = 1;
-        speech.rate = 0.9; // Awaz ki speed (0.1 se 10 tak)
-        speech.pitch = 1; // Awaz ki bhaari-pan
+    async function startRecording() {
+        const text = document.getElementById('text').value;
+        if (!text) return alert("Kuch likhein!");
 
-        // Urdu/Hindi support koshish
-        speech.lang = 'hi-IN'; 
+        document.getElementById('status').innerText = "AI Processing...";
+        
+        // Voice Setup
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'hi-IN';
+        msg.rate = 0.8;
 
-        window.speechSynthesis.speak(speech);
-    }
+        // Recording Logic
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
 
-    function quickShairi(element) {
-        document.getElementById('text-to-speak').value = element.innerText;
-        speakText();
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const link = document.getElementById('downloadLink');
+            link.href = audioUrl;
+            link.download = "Mudassir_Voice.wav";
+            link.style.display = "block";
+            document.getElementById('status').innerText = "Taiyar hai! Download karein.";
+        };
+
+        // Start Recording and Speaking
+        mediaRecorder.start();
+        window.speechSynthesis.speak(msg);
+
+        msg.onend = () => {
+            mediaRecorder.stop();
+            stream.getTracks().forEach(track => track.stop());
+        };
     }
 </script>
 
