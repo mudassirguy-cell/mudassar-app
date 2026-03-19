@@ -1,53 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mudassir Cloud Gaming</title>
+    <style>
+        /* Gaming Theme Design */
+        body { background: #0b0e11; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        header { background: #fe2c55; padding: 15px; text-align: center; font-weight: bold; font-size: 22px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        
+        .container { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding-bottom: 100px; }
+        
+        .game-card { background: #1c2128; border-radius: 12px; overflow: hidden; border: 1px solid #30363d; transition: 0.3s; }
+        .game-card:active { transform: scale(0.95); }
+        .game-card img { width: 100%; height: 110px; object-fit: cover; }
+        .game-info { padding: 10px; text-align: center; }
+        .game-info h4 { margin: 5px 0; font-size: 14px; color: #adbac7; }
+        
+        .play-btn { background: #fe2c55; color: white; border: none; width: 100%; padding: 10px; font-weight: bold; cursor: pointer; border-radius: 0 0 12px 12px; }
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        /* Full Screen Game Player */
+        #game-player { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 9999; }
+        iframe { width: 100%; height: 100%; border: none; }
+        .back-btn { position: absolute; top: 15px; left: 15px; background: rgba(254, 44, 85, 0.8); color: white; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; z-index: 10000; cursor: pointer; }
+    </style>
+</head>
+<body>
 
-  // Jo Firebase Config aapne pehle copy kiya tha, wo yahan dubaara dalein
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "mudassir-reels.firebaseapp.com",
-    databaseURL: "https://mudassir-reels-default-rtdb.firebaseio.com", // Aapki link
-    projectId: "mudassir-reels",
-    storageBucket: "mudassir-reels.appspot.com",
-    messagingSenderId: "411777056267",
-    appId: "1:411777056267:web:..."
-  };
+<header>MUDASSIR CLOUD GAMES 🎮</header>
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+<div class="container">
+    <div class="game-card">
+        <img src="https://api.poki.com/poki-gcom/grid/1709553655110.png" alt="Venge.io">
+        <div class="game-info"><h4>Venge (PUBG Style)</h4></div>
+        <button class="play-btn" onclick="playGame('https://venge.io/')">PLAY NOW</button>
+    </div>
 
-  // Comment bhejne ka function
-  window.sendComment = function() {
-    const text = document.getElementById("comment-input").value;
-    if(text) {
-      push(ref(db, 'comments'), { text: text });
-      document.getElementById("comment-input").value = "";
+    <div class="game-card">
+        <img src="https://api.poki.com/poki-gcom/grid/1708432326715.png" alt="Subway Surfers">
+        <div class="game-info"><h4>Subway Surfers</h4></div>
+        <button class="play-btn" onclick="playGame('https://poki.com/en/g/subway-surfers')">PLAY NOW</button>
+    </div>
+
+    <div class="game-card">
+        <img src="https://api.poki.com/poki-gcom/grid/1709033331006.png" alt="Madalin Cars">
+        <div class="game-info"><h4>Drift Racing</h4></div>
+        <button class="play-btn" onclick="playGame('https://poki.com/en/g/madalin-stunt-cars-2')">PLAY NOW</button>
+    </div>
+
+    <div class="game-card">
+        <img src="https://api.poki.com/poki-gcom/grid/1708605330058.png" alt="Zombie">
+        <div class="game-info"><h4>Zombie Sniper</h4></div>
+        <button class="play-btn" onclick="playGame('https://poki.com/en/g/stupid-zombies')">PLAY NOW</button>
+    </div>
+</div>
+
+<div id="game-player">
+    <button class="back-btn" onclick="closeGame()">⬅ BACK</button>
+    <iframe id="game-iframe" src=""></iframe>
+</div>
+
+<script>
+    function playGame(url) {
+        document.getElementById('game-iframe').src = url;
+        document.getElementById('game-player').style.display = 'block';
     }
-  }
-
-  // Comments dikhane ka function
-  onValue(ref(db, 'comments'), (snapshot) => {
-    const data = snapshot.val();
-    const display = document.getElementById("comments-display");
-    display.innerHTML = "";
-    for(let id in data) {
-      display.innerHTML += `<p style="color:black; background:#eee; padding:5px; border-radius:5px;">${data[id].text}</p>`;
+    function closeGame() {
+        document.getElementById('game-player').style.display = 'none';
+        document.getElementById('game-iframe').src = '';
     }
-  });
 </script>
 
-<div class="video-container">
-  <video src="Aapki_Video_Link" loop autoplay muted></video>
-  <div class="sidebar">
-     <button onclick="alert('Liked!')">❤️</button>
-     <button onclick="document.getElementById('comment-section').style.display='block'">💬</button>
-  </div>
-</div>
+</body>
+</html>
 
-<div id="comment-section" style="display:none; position:fixed; bottom:0; width:100%; background:white; padding:20px; z-index:100;">
-  <input id="comment-input" type="text" placeholder="Likho kuch...">
-  <button onclick="sendComment()">Bhejo</button>
-  <div id="comments-display" style="max-height:200px; overflow-y:auto;"></div>
-  <button onclick="document.getElementById('comment-section').style.display='none'">Band karein</button>
-</div>
