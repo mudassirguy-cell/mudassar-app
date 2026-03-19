@@ -1,49 +1,93 @@
-<script type="module">
-    // Aapki Key bilkul sahi hai, ise mat badlein
-    const MY_API_KEY = "AIzaSyAG8Na4WeEcxIJhje6i4AAgmm6u3WzTx5U"; 
-
-    window.sendMessage = async function() {
-        const input = document.getElementById('user-input');
-        const text = input.value.trim();
-        if (!text) return;
-
-        addMessage(text, 'user-msg');
-        input.value = '';
-        document.getElementById('typing').style.display = 'block';
-
-        try {
-            // Version ko v1beta se v1 kar diya aur model check kiya
-            const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${MY_API_KEY}`;
-            
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: text }] }]
-                })
-            });
-
-            const data = await response.json();
-            
-            if (data.error) {
-                // Agar ab bhi error aaye toh screen par dikhayega
-                addMessage("System Update: " + data.error.message, 'ai-msg');
-            } else {
-                const aiReply = data.candidates[0].content.parts[0].text;
-                addMessage(aiReply, 'ai-msg');
-            }
-        } catch (error) {
-            addMessage("Network Error: Connection check karein.", 'ai-msg');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mudassir Pro Card</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+    <style>
+        body {
+            margin: 0; padding: 0;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; background: #0b0d11;
+            font-family: 'Segoe UI', sans-serif;
         }
-        document.getElementById('typing').style.display = 'none';
-    }
 
-    function addMessage(text, className) {
-        const container = document.getElementById('chat-container');
-        const div = document.createElement('div');
-        div.className = 'msg ' + className;
-        div.innerText = text;
-        container.appendChild(div);
-        container.scrollTop = container.scrollHeight;
-    }
-</script>
+        /* 3D Card Styling */
+        .card {
+            position: relative; width: 320px; height: 450px;
+            background: rgba(255, 255, 255, 0.05);
+            margin: 20px; border-radius: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center;
+            flex-direction: column; cursor: pointer;
+            transform-style: preserve-3d;
+        }
+
+        .card .content {
+            padding: 20px; text-align: center;
+            transform: translateZ(50px); /* 3D effect */
+        }
+
+        .card .content img {
+            width: 100px; height: 100px;
+            border-radius: 50%; border: 3px solid #fe2c55;
+            margin-bottom: 15px; box-shadow: 0 0 20px #fe2c55;
+        }
+
+        .card .content h2 {
+            color: #fff; font-size: 24px; margin-bottom: 5px;
+        }
+
+        .card .content p {
+            color: #aaa; font-size: 14px; margin-bottom: 20px;
+        }
+
+        /* Social Buttons */
+        .social-links { display: flex; gap: 10px; justify-content: center; }
+        
+        .btn {
+            padding: 10px 20px; border-radius: 20px;
+            text-decoration: none; color: white; font-weight: bold;
+            font-size: 12px; transition: 0.3s;
+            background: #fe2c55;
+        }
+
+        .btn:hover {
+            background: #fff; color: #fe2c55;
+            box-shadow: 0 0 15px #fe2c55;
+        }
+
+        /* Background Glow */
+        .card::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #fe2c55; clip-path: circle(150px at 80% 20%);
+            z-index: -1; border-radius: 15px; opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card" data-tilt data-tilt-max="25" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.5">
+        <div class="content">
+            <img src="https://via.placeholder.com/100" alt="Mudassir">
+            <h2>MUDASSIR GUY</h2>
+            <p>Web Developer | Gamer | Tech Enthusiast</p>
+            
+            <div class="social-links">
+                <a href="#" class="btn">WhatsApp</a>
+                <a href="#" class="btn">GitHub</a>
+                <a href="#" class="btn">FB</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tilt Effect Animation
+        VanillaTilt.init(document.querySelectorAll(".card"));
+    </script>
+</body>
+</html>
