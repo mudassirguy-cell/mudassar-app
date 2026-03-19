@@ -1,76 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mudassar Reels Pro</title>
-    <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: black; }
-        .video-container { height: 100vh; width: 100%; position: relative; display: flex; align-items: center; justify-content: center; }
-        video { width: 100%; height: 100%; object-fit: cover; }
-        
-        /* TikTok Style Sidebar */
-        .sidebar { position: absolute; right: 15px; bottom: 100px; display: flex; flex-direction: column; gap: 20px; color: white; text-align: center; font-family: sans-serif; }
-        .icon { font-size: 30px; cursor: pointer; }
-        .icon span { font-size: 14px; display: block; }
-
-        /* Comment Box */
-        #comment-box { position: absolute; bottom: 0; background: rgba(255,255,255,0.9); width: 100%; padding: 15px; display: none; border-radius: 20px 20px 0 0; }
-        input { width: 80%; padding: 10px; border-radius: 20px; border: 1px solid #ccc; }
-    </style>
-</head>
-<body>
-
-<div class="video-container">
-    <video src="YOUR_VIDEO_LINK_HERE" loop autoplay muted onclick="this.paused ? this.play() : this.pause()"></video>
-
-    <div class="sidebar">
-        <div class="icon" onclick="addLike()">❤️ <span id="like-count">0</span></div>
-        <div class="icon" onclick="toggleComments()">💬 <span>12</span></div>
-        <div class="icon">➡️ <span>Share</span></div>
-    </div>
-
-    <div id="comment-box">
-        <h4>Comments</h4>
-        <input type="text" placeholder="Write a comment...">
-        <button onclick="toggleComments()">Close</button>
-    </div>
-</div>
-
-<script>
-    function addLike() {
-        let count = document.getElementById('like-count');
-        count.innerText = parseInt(count.innerText) + 1;
-        alert("Shukriya! Like save ho gaya.");
-    }
-    function toggleComments() {
-        let box = document.getElementById('comment-box');
-        box.style.display = (box.style.display === 'none') ? 'block' : 'none';
-    }
-</script>
-
-</body>
-</html>
 <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  // Jo Firebase Config aapne pehle copy kiya tha, wo yahan dubaara dalein
   const firebaseConfig = {
-    apiKey: "AIzaSyBZpsMGK-Xz571d4zJwYQ0Sc_itzbXj6CM",
+    apiKey: "YOUR_API_KEY",
     authDomain: "mudassir-reels.firebaseapp.com",
+    databaseURL: "https://mudassir-reels-default-rtdb.firebaseio.com", // Aapki link
     projectId: "mudassir-reels",
-    storageBucket: "mudassir-reels.firebasestorage.app",
+    storageBucket: "mudassir-reels.appspot.com",
     messagingSenderId: "411777056267",
-    appId: "1:411777056267:web:fd01495b11c5aaf2d8110e",
-    measurementId: "G-LQQNB8Z3QH"
+    appId: "1:411777056267:web:..."
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+  const db = getDatabase(app);
+
+  // Comment bhejne ka function
+  window.sendComment = function() {
+    const text = document.getElementById("comment-input").value;
+    if(text) {
+      push(ref(db, 'comments'), { text: text });
+      document.getElementById("comment-input").value = "";
+    }
+  }
+
+  // Comments dikhane ka function
+  onValue(ref(db, 'comments'), (snapshot) => {
+    const data = snapshot.val();
+    const display = document.getElementById("comments-display");
+    display.innerHTML = "";
+    for(let id in data) {
+      display.innerHTML += `<p style="color:black; background:#eee; padding:5px; border-radius:5px;">${data[id].text}</p>`;
+    }
+  });
 </script>
+
+<div class="video-container">
+  <video src="Aapki_Video_Link" loop autoplay muted></video>
+  <div class="sidebar">
+     <button onclick="alert('Liked!')">❤️</button>
+     <button onclick="document.getElementById('comment-section').style.display='block'">💬</button>
+  </div>
+</div>
+
+<div id="comment-section" style="display:none; position:fixed; bottom:0; width:100%; background:white; padding:20px; z-index:100;">
+  <input id="comment-input" type="text" placeholder="Likho kuch...">
+  <button onclick="sendComment()">Bhejo</button>
+  <div id="comments-display" style="max-height:200px; overflow-y:auto;"></div>
+  <button onclick="document.getElementById('comment-section').style.display='none'">Band karein</button>
+</div>
