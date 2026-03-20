@@ -1,83 +1,65 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mudassir Voice Studio Pro</title>
+    <title>Winlator Download Hub - Mudassir</title>
     <style>
-        body { background: #050505; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; }
-        .box { max-width: 450px; margin: auto; background: #111; padding: 30px; border-radius: 25px; border: 2px solid #fe2c55; box-shadow: 0 0 30px rgba(254,44,85,0.3); }
-        h1 { color: #fe2c55; letter-spacing: 2px; }
-        p { color: #888; font-size: 14px; }
+        body { background: #050505; color: white; font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; padding: 20px; }
         
-        textarea { width: 100%; height: 150px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 15px; padding: 15px; font-size: 16px; outline: none; margin-bottom: 20px; border-left: 4px solid #fe2c55; }
-        
-        .btn { width: 100%; padding: 15px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; margin-top: 10px; }
-        .play-btn { background: #fe2c55; color: white; box-shadow: 0 5px 15px rgba(254, 44, 85, 0.4); }
-        .download-btn { background: #28a745; color: white; display: none; text-decoration: none; line-height: 15px; }
-        
-        .status { margin-top: 20px; font-size: 14px; color: #fe2c55; font-weight: bold; }
+        .container { 
+            max-width: 500px; margin: 50px auto; 
+            background: #111; padding: 40px; 
+            border-radius: 30px; border: 1px solid #fe2c55;
+            box-shadow: 0 0 40px rgba(254, 44, 85, 0.2);
+        }
+
+        .icon { font-size: 60px; margin-bottom: 10px; }
+        h1 { color: #fe2c55; letter-spacing: 1px; margin-bottom: 10px; }
+        p { color: #aaa; line-height: 1.6; margin-bottom: 30px; }
+
+        /* Tech Style Download Button */
+        .dl-btn {
+            display: inline-block;
+            background: linear-gradient(45deg, #fe2c55, #ff4d6d);
+            color: white; padding: 18px 40px;
+            border-radius: 50px; text-decoration: none;
+            font-weight: bold; font-size: 18px;
+            box-shadow: 0 10px 20px rgba(254, 44, 85, 0.4);
+            transition: 0.3s; border: 2px solid transparent;
+        }
+
+        .dl-btn:hover {
+            transform: translateY(-5px);
+            background: transparent;
+            border-color: #fe2c55;
+            color: #fe2c55;
+            box-shadow: 0 15px 30px rgba(254, 44, 85, 0.6);
+        }
+
+        .info-tag {
+            display: inline-block; background: #222;
+            padding: 5px 15px; border-radius: 20px;
+            font-size: 12px; color: #fe2c55; margin-top: 20px;
+            border: 1px solid #333;
+        }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <h1>STORY VOICE AI 🎙️</h1>
-    <p>TikTok & Reels ke liye Shayeri aur Kahaniyan banayein</p>
+<div class="container">
+    <div class="icon">🎮</div>
+    <h1>Winlator Pro</h1>
+    <p>Android par PC Games (GTA V, Hitman, NFS) chalane ke liye sabse behtareen emulator yahan se download karein.</p>
     
-    <textarea id="text" placeholder="Yahan apni pur-asar shayeri ya kahani likhein..."></textarea>
-    
-    <div id="status" class="status">System Ready...</div>
+    <a href="https://github.com/brunodev85/winlator/releases" target="_blank" class="dl-btn">
+        DOWNLOAD LATEST APK 📥
+    </a>
 
-    <button class="btn play-btn" onclick="generateAndRecord()">BANAIN AUR SUNAIN</button>
-    <a id="downloadLink" class="btn download-btn">FILE DOWNLOAD KAREIN (MP3/WAV) 📥</a>
+    <br>
+    <div class="info-tag">Version: 7.1 (Stable)</div>
+    <div class="info-tag">Size: ~120 MB</div>
 </div>
-
-<script>
-    let audioChunks = [];
-    let mediaRecorder;
-
-    async function generateAndRecord() {
-        const text = document.getElementById('text').value;
-        if (!text) return alert("Pehle kuch likhein!");
-
-        const status = document.getElementById('status');
-        status.innerText = "AI Recording Started...";
-
-        // Voice Configuration for Storytelling
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = 'hi-IN'; // Best for Urdu/Hindi
-        msg.rate = 0.82;    // Thoda slow taake ehsas paida ho
-        msg.pitch = 0.9;    // Thodi bhari aur mardana (Deep) awaz
-
-        // Audio Recording Setup
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        audioChunks = [];
-
-        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-        
-        mediaRecorder.onstop = () => {
-            const blob = new Blob(audioChunks, { type: 'audio/wav' });
-            const url = URL.createObjectURL(blob);
-            const link = document.getElementById('downloadLink');
-            link.href = url;
-            link.download = "Mudassir_Deep_Voice.wav";
-            link.style.display = "block";
-            status.innerText = "Recording Complete! Niche se download karein.";
-        };
-
-        mediaRecorder.start();
-        window.speechSynthesis.speak(msg);
-
-        msg.onend = () => {
-            setTimeout(() => {
-                mediaRecorder.stop();
-                stream.getTracks().forEach(track => track.stop());
-            }, 500); // Thoda extra gap recording ke liye
-        };
-    }
-</script>
 
 </body>
 </html>
